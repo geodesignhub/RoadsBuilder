@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Geodesign Hub Roads Builder</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="Description" lang="en" content="Geodesign Hub Evaluation Maps Builder">
+    <meta name="author" content="Hrishikesh Ballal">
+    <meta name="robots" content="index, follow">
+    <!-- icons -->
+    <link rel="shortcut icon" href="assets/loaders/favicon.ico">
+    <!-- Bootstrap Core CSS file -->
+    <link rel="stylesheet" href="assets/css/bootstrap.min.css">
+    <!-- Override CSS file - add your own CSS rules -->
+    <link rel="stylesheet" href="assets/css/styles.css">
+    <link rel="stylesheet" href="assets/css/ion.rangeSlider.css">
+    <link rel="stylesheet" href="assets/css/ion.rangeSlider.skinFlat.css">
+    <link rel="stylesheet" type="text/css" href="assets/css/flatty.css" />
+    <link rel="stylesheet" type="text/css" href="assets/css/leaflet.css" />
+    <link rel="stylesheet" href="assets/draw/leaflet.draw.css" />
+    <link rel="stylesheet" href="assets/css/leaflet-measure-path.css" />
+    <link href='https://fonts.googleapis.com/css?family=Open+Sans' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    <!-- Conditional comment containing JS files for IE6 - 8 -->
+    <!--[if lt IE 9]>
+            <script src="assets/js/html5.js"></script>
+            <script src="assets/js/respond.min.js"></script>
+        <![endif]-->
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-fixed-top navbar-inverse" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Geodesign Hub Roads Builder</a>
+            </div>
+            <!-- /.navbar-header -->
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container-fluid -->
+    </nav>
+    <!-- /.navbar -->
+    <!-- Page Content -->
+    <div class="container-fluid">
+        <!-- /.row -->
+        <br>
+        <!-- Heading Row -->
+        <div class="row">
+            <div class="col-md-12">
+
+                <p class="description">This plugin enables you to add and edit road / transport geometries and upload it back on Geodesign Hub as a new Diagram.</p>
+            </div>
+        </div>
+        <div class="row">
+
+            <div class="col-md-6">
+                <h3>New Diagram Details</h3><br>
+                <div id="systemsCB"></div><br>
+                <div class="hide">
+                <label>Select Project or Policy</label>
+                <p><label class="radio-inline"><input type="radio" name="projorpol" value="project" checked>Project</label>
+                </p><br>
+                    </div>
+
+                <label>Give the Diagram a name</label>
+                <ul class="input-list style-2 clearfix">
+                    <li>
+                        <input type="text" id="newDiagName" placeholder="e.g. New Industrial Area">
+                    </li>
+                </ul>
+            </div>
+
+            <div class="col-md-6">
+                <h3>Draft Diagram</h3>
+                <div id="inputmap"></div>
+                <h4 id="diagName"> </h4>
+            </div>
+
+        </div>
+
+        <div class="row"><br>
+
+            <div class="col-md-6">
+
+            </div>
+
+            <div class="col-md-6">
+
+                <button id="addDiagram" type="button" class="btn btn-success"><i class="glyphicon glyphicon-plus-sign"></i> Add as new Diagram </button>
+
+            </div>
+
+        </div>
+
+        <!-- /.col-md-4 -->
+
+        <!-- /.row -->
+        <hr>
+
+        <br><br>
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12">
+                    <p>&copy; 2017 <a href="https://www.geodesignhub.com/">Geodesign Hub</a>, see the <a href="https://github.com/geodesignhub/RoadsBuilder">GitHub repository</a> for more information.</p>
+                </div>
+            </div>
+        </footer>
+        <div id="drawing"></div>
+    </div>
+    <!-- /.container-fluid -->
+    <!-- JQuery scripts -->
+    <script type="text/javascript" src="assets/js/jquery.min.js"></script>
+    <script type="text/javascript" src="assets/js/humane.min.js"></script>
+    <script type="text/javascript" src="assets/js/svg.min.js"></script>
+    <!-- Bootstrap Core scripts -->
+    <script type="text/javascript" src="assets/js/ion.rangeSlider.min.js"></script>
+    <script type="text/javascript" src="assets/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="assets/js/colors.js"></script>
+    <script type="text/javascript" src="assets/js/leaflet.js"></script>
+    <script type="text/javascript" src="assets/js/leaflet-measure-path.js"></script>
+    <script type="text/javascript" src="assets/draw/Leaflet.draw.js"></script>
+    <script type="text/javascript" src="assets/draw/Leaflet.Draw.Event.js"></script>
+    <script type="text/javascript" src="assets/draw/Toolbar.js"></script>
+    <script type="text/javascript" src="assets/draw/Tooltip.js"></script>
+    <script type="text/javascript" src="assets/draw/ext/GeometryUtil.js"></script>
+    <script type="text/javascript" src="assets/draw/ext/LatLngUtil.js"></script>
+    <script type="text/javascript" src="assets/draw/ext/LineUtil.Intersect.js"></script>
+    <script type="text/javascript" src="assets/draw/ext/Polygon.Intersect.js"></script>
+    <script type="text/javascript" src="assets/draw/ext/Polyline.Intersect.js"></script>
+    <script type="text/javascript" src="assets/draw/ext/TouchEvents.js"></script>
+    <script type="text/javascript" src="assets/draw/draw/DrawToolbar.js"></script>
+    <script type="text/javascript" src="assets/draw/draw/handler/Draw.Feature.js"></script>
+    <script type="text/javascript" src="assets/draw/draw/handler/Draw.SimpleShape.js"></script>
+    <script type="text/javascript" src="assets/draw/draw/handler/Draw.Polyline.js"></script>
+    <script type="text/javascript" src="assets/draw/draw/handler/Draw.Circle.js"></script>
+    <script type="text/javascript" src="assets/draw/draw/handler/Draw.Marker.js"></script>
+    <script type="text/javascript" src="assets/draw/draw/handler/Draw.Polygon.js"></script>
+    <script type="text/javascript" src="assets/draw/draw/handler/Draw.Rectangle.js"></script>
+    <script type="text/javascript" src="assets/draw/edit/EditToolbar.js"></script>
+    <script type="text/javascript" src="assets/draw/edit/handler/EditToolbar.Edit.js"></script>
+    <script type="text/javascript" src="assets/draw/edit/handler/EditToolbar.Delete.js"></script>
+    <script type="text/javascript" src="assets/draw/Control.Draw.js"></script>
+    <script type="text/javascript" src="assets/draw/edit/handler/Edit.Poly.js"></script>
+    <script type="text/javascript" src="assets/draw/edit/handler/Edit.SimpleShape.js"></script>
+    <script type="text/javascript" src="assets/draw/edit/handler/Edit.Circle.js"></script>
+    <script type="text/javascript" src="assets/draw/edit/handler/Edit.Rectangle.js"></script>
+    <script type="text/javascript" src="assets/draw/edit/handler/Edit.Marker.js"></script>
+    <script type="text/javascript" type="text/javascript">
+        var svgDrawing = SVG('drawing').size(10, 10);
+
+        function miniMapstyleComp(feature) {
+            // console.log(feature.properties)
+            var curFeature = feature.geometry.type;
+            if (curFeature === 'LineString') {
+                // console.log(feature)
+                return {
+                    weight: 2,
+                    opacity: .9,
+                    color: feature.properties.color,
+                    dashArray: '',
+
+                };
+            } else {
+                // var fillColor = getColor(feature.properties.areatype);
+
+                if (feature.properties.areatype == 'project') {
+                    var fillColor = feature.properties.color;
+                } else { // it is policy
+                    var fillPattern = setSVGStyle(feature.properties.color);
+                    var fillColor = fillPattern;
+                }
+
+                return {
+                    // fillColor: feature.properties.color,
+                    // fillColor:'#333333',
+                    weight: 1,
+                    stroke: true,
+                    opacity: 0.9,
+                    fillColor: fillColor,
+                    color: feature.properties.color,
+                    dashArray: '',
+                    // opacity: 0.2,
+                    fillOpacity: 0.8,
+                };
+            }
+
+        }
+
+        function bindRadioChangeBtn() {
+            $('input[type=radio][name=sysCB]').change(function() {
+                var sysid = parseInt($('input[name=sysCB]:checked')[0].id);
+                var projorpol = ($('input:radio[name="projorpol"]:checked').val()) ? $('input:radio[name="projorpol"]:checked').val() : 'project';
+
+                for (var k = 0; k < systems.length; k++) {
+
+                    var cursys = systems[k];
+                    var cursyscolor = cursys.syscolor;
+                    if (cursys.id === sysid) {
+                        if (projorpol == 'project') {
+                            var fillColor = cursyscolor;
+                        } else { // it is policy
+                            var fillPattern = setSVGStyle(cursyscolor);
+                            var fillColor = fillPattern;
+                        }
+                        drawnItems.setStyle({
+                            'color': cursyscolor,
+                            'fillColor': fillColor
+                        });
+
+                        break;
+                    }
+                }
+            });
+        }
+
+        // function bindRadioChangeBtnProjPol() {
+        //     $('input:radio[name="projorpol"]').change(function() {
+
+        //         var sysid = parseInt($('input[name=sysCB]:checked')[0].id);
+        //         var projorpol = ($('input:radio[name="projorpol"]:checked').val()) ? $('input:radio[name="projorpol"]:checked').val() : 'project';
+
+        //         for (var k = 0; k < systems.length; k++) {
+        //             var cursys = systems[k];
+        //             var cursyscolor = cursys.syscolor;
+        //             if (cursys.id === sysid) {
+        //                 if (projorpol == 'project') {
+        //                     var fillColor = cursyscolor;
+        //                 } else { // it is policy
+        //                     var fillPattern = setSVGStyle(cursyscolor);
+        //                     var fillColor = fillPattern;
+        //                 }
+        //                 drawnItems.setStyle({
+        //                     'color': cursyscolor,
+        //                     'fillColor': fillColor
+        //                 });
+
+
+        //                 break;
+        //             }
+        //         }
+        //     });
+        // }
+
+        function setSVGStyle(reqColor) {
+            var pattern = svgDrawing.pattern(6, 6, function(add) {
+                // add.rect(5, 5).fill(reqColor)
+                add.line(0, 0, 6, 6).stroke({
+                    width: 1,
+                    color: reqColor
+                })
+                add.line(6, 0, 0, 6).stroke({
+                    width: 1,
+                    color: reqColor
+                })
+            });
+            return pattern.fill();
+        }
+
+        function getColor(type) {
+
+            return type === 'policy' ? '#707070 ' :
+                type === 'project' ? '#a69695 ' :
+                type === 'red2' ? '#bd0026' :
+                type === 'red' ? '#f03b20' :
+                type === 'yellow' ? '#FFFF00' :
+                type === 'green' ? '#74c476' :
+                type === 'green2' ? '#31a354' :
+                type === 'green3' ? '#006d2c' :
+                type === 'purple' ? '#CFACF7' :
+                type === 'purple2' ? '#8D6CBF' :
+                type === 'purple3' ? '#601286' :
+                type === 'orange' ? '#FFA927' :
+                type === 'orange2' ? '#F8872E' :
+                type === 'orange3' ? '#FC6B0A' :
+                type === 'constraints' ? '#343434' :
+                type === 'boundaries' ? '#a6cee3' :
+                type === 'boundaries2' ? '#b2df8a' :
+                '#808080';
+        }
+        // $("#loadingGIF").hide();
+        var opGJ = {
+            "type": "FeatureCollection",
+            "features": []
+        };
+        var systems = <%- systems %>;
+        var bounds = <%- bounds %>;
+        var apitoken = "<%= apitoken  %>"; //var test is now assigned to getTest which will only work on browsers
+        var projectid = "<%= projectid %>";
+        if (bounds !== 0) {
+            var bounds = bounds['bounds'];
+
+            var latLngs = bounds.split(',');
+            var southWest = L.latLng(latLngs[1], latLngs[0]);
+            var northEast = L.latLng(latLngs[3], latLngs[2]);
+            var mb = L.latLngBounds(southWest, northEast);
+            generateSystemCB(systems);
+            // bind system change addEvent
+
+            var inputmap = L.map('inputmap', {
+
+                zoomControl: true,
+                minZoom: 6,
+                maxZoom: 18,
+            });
+
+            // FeatureGroup is to store editable layers
+            var drawnItems = new L.FeatureGroup();
+
+            inputmap.addLayer(drawnItems);
+            var drawControl = new L.Control.Draw({
+                edit: {
+                    featureGroup: drawnItems,
+                    poly: {
+                        allowIntersection: false
+                    }
+                },
+                draw: {
+                    marker: false,
+                    polyline: true,
+                    circle: false,
+                    polygon: false, 
+                    rectangle: false
+                }
+            });
+            inputmap.addControl(drawControl);
+            inputmap.on(L.Draw.Event.CREATED, function(event) {
+                var layer = event.layer;
+                drawnItems.addLayer(layer);
+                layer.showMeasurements();
+                var sysid = ($('input[name=sysCB]:checked')[0]) ? (parseInt($('input[name=sysCB]:checked')[0].id)) : 0;
+                var projorpol = ($('input:radio[name="projorpol"]:checked').val()) ? $('input:radio[name="projorpol"]:checked').val() : 'project';
+                for (var k = 0; k < systems.length; k++) {
+                    var cursys = systems[k];
+                    var cursyscolor = cursys.syscolor;
+                    if (cursys.id === sysid) {
+                        if (projorpol == 'project') {
+                            var fillColor = cursyscolor;
+                        } else { // it is policy
+                            var fillPattern = setSVGStyle(cursyscolor);
+                            var fillColor = fillPattern;
+                        }
+                        drawnItems.setStyle({
+                            'color': cursyscolor,
+                            'fillColor': fillColor
+                        });
+
+
+                        break;
+                    }
+                }
+            });
+
+            var inputbaseLayer = L.tileLayer('https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, &copy; <a href="https://cartodb.com/attributions">CartoDB</a>',
+                maxZoom: 18,
+            }).addTo(inputmap);
+            inputmap.fitBounds(mb);
+
+            bindRadioChangeBtn();
+            // bindRadioChangeBtnProjPol();
+        }
+
+        function generateSystemCB(systems) {
+            $('#systemsCB').append("<p><label>Choose destination System</label> ");
+            for (var x = 0; x < systems.length; x++) {
+
+                $('#systemsCB').append('<input name="sysCB" id=' + "'" + systems[x].id + "'" + 'type="radio" /> <span class="square c-' + systems[x].syscolor.substring(1) + '"></span>&nbsp;&nbsp;' + systems[x].sysname + '</input>&nbsp;&nbsp;');
+            }
+            $('#systemsCB').append("</p>");
+        }
+
+        // function computeBuffer() {
+        //     var bufA = $('input:radio[name="bufferA"]:checked').val();
+        //     var bufferGenWorker = new Worker('/assets/workers/computeBuffer.js');
+        //     bufferGenWorker.onerror = function(e) {
+        //         console.log('Error: Line ' + e.lineno + ' in ' + e.filename + ': ' + e.message);
+        //         $("#loadingGIF").hide();
+        //         humane.log("There was a error in processing, please try again.. ", {
+        //             addnCls: 'humane-flatty-log'
+        //         });
+
+        //     };
+        //     // console.log(selectedsystems);
+        //     bufferGenWorker.postMessage({
+        //         'buffer': bufA,
+        //         'diagGJ': JSON.stringify(diagramdetail['geojson'])
+        //     });
+        //     bufferGenWorker.addEventListener('message', function(e) {
+        //         if (e.data.mode === 'status') {
+        //             updateWorkerStatus(e.data.percentcomplete);
+        //         } else {
+        //             loadOutputBuffer(JSON.parse(e.data.output), true);
+        //             $("#loadingGIF").hide();
+        //         }
+        //     }, false);
+        // }
+        // $('#computeBuffButton').on('click', function(e) {
+
+        //     $("#loadingGIF").show();
+        // });
+        $('#addDiagram').on('click', function(e) {
+            addDiagram();
+        });
+
+        function addDiagram() {
+            var validated = false;
+            var projorpol = $('input:radio[name="projorpol"]:checked').val();
+            var targetsysid = false;
+            if ($('input:radio[name="sysCB"]:checked')[0]) {
+                targetsysid = $('input:radio[name="sysCB"]:checked')[0].id;
+            } else {
+                targetsysid = false;
+            }
+            var diagname = $("#newDiagName").val();
+            opGJ = drawnItems.toGeoJSON();
+            if (projorpol && targetsysid && opGJ.features.length > 0 && diagname) {
+
+                var opFeatLen = opGJ.features.length;
+                if (opFeatLen > 0) {
+                    for (var l = 0; l < opFeatLen; l++) {
+                        opGJ.features[l].properties = {};
+                    }
+                    validated = true;
+                } else {
+                    validated = false;
+                }
+            }
+            if (validated) {
+                var data = {
+                    'projorpol': projorpol,
+                    'targetsysid': targetsysid,
+                    'diagname': diagname,
+                    'apitoken': apitoken,
+                    'projectid': projectid,
+                    'gj': JSON.stringify(opGJ),
+                    '_csrf': '<%= csrfToken %>'
+                };
+                // console.log(data);
+                //your awesome code here
+                var url = '/adddiagram/';
+                var promise = $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: data
+                });
+                promise.done(function(data) {
+                    drawnItems.clearLayer();
+                    humane.log(data.body.status, {
+                        addnCls: 'humane-flatty-success'
+                    });
+                    $("#newDiagName").val("");
+                    $('input[name="sysCB"]').prop('checked', false);
+                    // $('input[name="projorpol"]').prop('checked', false);
+                });
+
+                promise.fail(function(data) {
+                    humane.log("Error in adding diagram.", {
+                        addnCls: 'humane-flatty-error'
+                    });
+                });
+            } else {
+                humane.log("Please some features, enter target system, project / policy and diagram name.", {
+                    addnCls: 'humane-flatty-error'
+                });
+            }
+        }
+    </script>
+</body>
+
+</html>
